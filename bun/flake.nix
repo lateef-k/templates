@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs-unstable.url = "nixpkgs-unstable";
+    nixpkgs.url = "nixpkgs";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
@@ -18,19 +18,15 @@
       ];
       perSystem = arg@{ system, ... }:
 
-        let pkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
+        let pkgs = inputs.nixpkgs.legacyPackages.${system};
 
         in {
           devShells.default = pkgs.mkShellNoCC {
-            packages = with pkgs; [
-              # (mkPoetryEnv { projectDir = self; })
-              uv
-              python312
-              zlib
-              stdenv.cc.cc.lib # This provides libstdc++
-            ];
-            LD_LIBRARY_PATH =
-              pkgs.lib.makeLibraryPath [ pkgs.zlib pkgs.stdenv.cc.cc.lib ];
+            packages = with pkgs;
+              [
+                # (mkPoetryEnv { projectDir = self; })
+                poetry
+              ];
           };
         };
     };
